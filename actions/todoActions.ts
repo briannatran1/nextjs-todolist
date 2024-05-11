@@ -1,6 +1,6 @@
 import db from "../db/drizzle";
 import { todo } from "../db/schema";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, not } from "drizzle-orm";
 
 /** inserts a new record into todo table */
 export const addTodo = async (id: number, text: string) => {
@@ -25,4 +25,19 @@ export const editTodo = async (id: number, text: string) => {
       text: text,
     })
     .where(eq(todo.id, id));
+};
+
+/** toggles status of a todo to its opposite state */
+export const toggleTodo = async (id: number) => {
+  await db
+    .update(todo)
+    .set({
+      done: not(todo.done),
+    })
+    .where(eq(todo.id, id));
+};
+
+/** deletes a todo by id */
+export const deleteToodo = async (id: number) => {
+  await db.delete(todo).where(eq(todo.id, id));
 };
